@@ -86,7 +86,7 @@ def main():
                         help='disables CUDA training')
     parser.add_argument('--log-interval', type=int, default=10, metavar='N',
                         help='how many batches to wait before logging training status')
-    parser.add_argument('--not-save-model', action='store_true', default=False,
+    parser.add_argument('--save-model', action='store_true', default=True,
                         help='For Saving the current Model')
     parser.add_argument('--visual', action='store_true', default=False,
                         help='For visualization')
@@ -97,6 +97,9 @@ def main():
     
     net = models.resnet101(num_classes=21)
     net=net.to(device)
+    
+    #a=torch.Tensor([[1,2,3,4],[2,3,4,6]])
+    #a.numpy()
     
     # data loaders
     print('data loading...\n')
@@ -125,6 +128,12 @@ def main():
         adjust_learning_rate(args.lr, optimizer, epoch)
         train(args, net, device, train_loader, optimizer, epoch)
         test(args, net, device, test_loader)
+
+    if not args.save_model:
+        print('Saving model in ./model/checkpoint.pt\n')
+        if not os.path.exists('model'):
+            os.mkdir('model')
+        torch.save(net.state_dict(),'model/checkpoint.pt')
 
 if __name__ == '__main__':
     main()
