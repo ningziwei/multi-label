@@ -32,6 +32,7 @@ def test(args, model, device, test_loader):
     test_loss=0
     correct=[0]*20
     num=[0]*20
+    tbs=args.test_batch_size
     with torch.no_grad():
         for data, target in test_loader:
             data, target = data.to(device), target.to(device)
@@ -53,9 +54,10 @@ def test(args, model, device, test_loader):
                 for index2 in pred:
                     if index2==index1:
                         correct[index2] += 1
-                        '''
-            num = num+np.array(target)
-            correct = correct+1-(ToF^np.array(target))
+            '''
+            for b in range(tbs):
+                num = num+np.array(target[b])
+                correct = correct+1-(ToF^np.array(target[b]))
                         
     num = np.array(num)
     correct = np.array(correct)
