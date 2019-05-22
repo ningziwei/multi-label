@@ -41,23 +41,9 @@ def test(args, model, device, test_loader):
             output = output.cpu()
             target = target.cpu()
             threshold=sum(output)/10
-            ToF=np.array(output)>threshold
-            '''index=0
-            n=0
-            pred = []
-            for judge in ToF:
-                if judge:
-                    pred[index]=n
-                    index += 1
-                n=n+1
             
-            for index1 in target:
-                num[index1]=num[index1]+1
-                for index2 in pred:
-                    if index2==index1:
-                        correct[index2] += 1
-            '''
             for b in range(tbs):
+                ToF=np.array(output[b])>threshold[b]
                 num = num+np.array(target[b])
                 correct = correct+1-(ToF^np.array(target[b]))
                         
