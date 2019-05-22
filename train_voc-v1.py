@@ -36,8 +36,10 @@ def test(args, model, device, test_loader):
     with torch.no_grad():
         for data, target in test_loader:
             data, target = data.to(device), target.to(device)
-            output, _, _ = model(data)
+            output = model(data)
             test_loss += F.cross_entropy(output, target, reduction='sum').item()
+            output = output.cpu()
+            target = target.cpu()
             threshold=sum(output)/10
             ToF=np.array(output)>threshold
             '''index=0
