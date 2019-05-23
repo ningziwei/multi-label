@@ -1,7 +1,6 @@
 import argparse, os, time
 import numpy as np
 import torch
-import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
 from torchvision import transforms, models
@@ -16,11 +15,12 @@ def adjust_learning_rate(lr, optimizer, epoch):
 def train(args, model, device, train_loader, optimizer, epoch):
     model.train()
     start_time = time.time()
+    loss=0
     for batch_idx, (data, target) in enumerate(train_loader):
         data, target = data.to(device), target.to(device)
         optimizer.zero_grad()
         output, _, _ = model(data)
-        loss = F.cross_entropy(output, target)
+        loss += F.cross_entropy(output, target)
         loss.backward()
         optimizer.step()
         if batch_idx%100 == 0:
@@ -32,20 +32,20 @@ def test(args, model, device, test_loader):
     test_loss=0
     correct=[0]*20
     num=[0]*20
-    tbs=args.test_batch_size
     with torch.no_grad():
         for data, target in test_loader:
             data, target = data.to(device), target.to(device)
+            
             output = model(data)
             test_loss += F.cross_entropy(output, target, reduction='sum').item()
             output = output.cpu()
             target = target.cpu()
-            threshold=sum(output)/10
-            
+            threshold=output.sum(axis=1)/10
+            tbs=len(output)
             for b in range(tbs):
-                ToF=np.array(output[b])>threshold[b]
+                ToF=output[b]>threshold[b]
                 num = num+np.array(target[b])
-                correct = correct+1-(ToF^np.array(target[b]))
+                correct = correct+(1-(ToF^np.array(target[b])))
                         
     num = np.array(num)
     correct = np.array(correct)
