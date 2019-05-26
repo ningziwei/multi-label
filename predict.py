@@ -44,10 +44,11 @@ def main():
         Datasetee17('./PascalVOC/','predict.txt',transform=transform1),
             batch_size=args.batch_size, shuffle=True, **kwargs)
     
+    Re = torch.nn.ReLU()
     for batch_idx, (data, target, _) in enumerate(predict_loader):
         print('batch_idx',batch_idx)
         data, target = data.to(device), target.to(device)
-        prediction = net(data)
+        prediction = Re(net(data))
         for t_idx, tar in enumerate(target):
             print('第{}张图：'.format(t_idx))
             print('target:{}'.format(tar))
