@@ -52,7 +52,7 @@ def main():
         for t_idx, tar in enumerate(target):
             print('第{}张图：'.format(t_idx))
             print('target:{}'.format(tar))
-            print('predict:{}'.format(prediction(t_idx)))
+            print('predict:{}'.format(prediction[t_idx]))
     
 if __name__ == '__main__':
     main()
